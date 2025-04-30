@@ -93,6 +93,7 @@ ORDER BY q2i.playerid DESC, schoolid ASC
 CREATE VIEW q3i(playerid, namefirst, namelast, yearid, slg)
 AS
   SELECT p.playerid, namefirst, namelast, yearid,
+         -- 计算公式
          ROUND((CAST(h AS FLOAT) + 1.0 * CAST(h2b AS FLOAT) + 2.0 * CAST(h3b AS FLOAT) + 3.0 * CAST(hr AS FLOAT)) / CAST(ab AS FLOAT),4) AS slg
 FROM people p
 INNER JOIN batting b
@@ -161,7 +162,7 @@ WITH bin(binid, low, high) AS (
     (SELECT MAX(salary) AS max, MIN(salary) AS min
     FROM salaries
     WHERE yearid = 2016
-    GROUP BY yearid) AS y2016 -- 建立表并取别名
+    GROUP BY yearid) AS y2016 -- 建立表
 group by binid)
 
 SELECT binid, low, high, COUNT(salary)
@@ -197,9 +198,9 @@ AND s.salary = (SELECT MAX(s2.salary) FROM salaries s2 WHERE s2.yearid = s.yeari
 -- Question 4v
 CREATE VIEW q4v(team, diffAvg) AS
   SELECT a.teamid,
-         MAX(s.salary) - MIN(s.salary) AS diffAvg -- 计算全明星队伍的最高薪水和最低薪水的差值
+         MAX(s.salary) - MIN(s.salary) AS diffAvg -- 计算全明星球员薪水最高的队伍与最低的队伍之间的差值
 FROM allstarfull a
-JOIN salaries s ON a.playerid = s.playerid AND a.yearid = s.yearid
+JOIN salaries s ON a.playerid = s.playerid AND a.yearid = s.yearid -- 连接条件
 WHERE s.yearid = 2016
 GROUP BY a.teamid
 ;
